@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="NGsePo" name="ChannelVocoder" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="audioplug" version="1.0.0"
+              bundleIdentifier="com.yu2924.ChannelVocoder" includeBinaryInAppConfig="1"
+              companyCopyright="(c) 2017 yu2924" buildVST="0" buildVST3="1"
+              buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0" buildStandalone="1"
+              enableIAA="0" pluginName="ChannelVocoder" pluginDesc="ChannelVocoder"
+              pluginManufacturer="yu2924" pluginManufacturerCode="2924" pluginCode="ycvc"
+              pluginChannelConfigs="" pluginIsSynth="1" pluginWantsMidiIn="1"
+              pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0"
+              pluginAUExportPrefix="ChannelVocoderAU" pluginRTASCategory=""
+              aaxIdentifier="com.yu2924.ChannelVocoder" pluginAAXCategory="2"
+              pluginFormats="buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              companyName="yu2924" jucerFormatVersion="1">
+  <MAINGROUP id="R9xBU1" name="ChannelVocoder">
+    <GROUP id="{E69B6D7A-373C-D1CC-8EAC-92F3FE434945}" name="Source">
+      <GROUP id="{B8C80BE3-16AC-9AFE-04F1-8FC9A2A2D761}" name="FABB">
+        <FILE id="w6b2cL" name="ApproxCR.h" compile="0" resource="0" file="Source/FABB/ApproxCR.h"/>
+        <FILE id="rhkMdI" name="BlitOscillator.h" compile="0" resource="0"
+              file="Source/FABB/BlitOscillator.h"/>
+        <FILE id="TCjWxV" name="BLT.h" compile="0" resource="0" file="Source/FABB/BLT.h"/>
+        <FILE id="b5qR97" name="CurveMapping.h" compile="0" resource="0" file="Source/FABB/CurveMapping.h"/>
+        <FILE id="jfe8jV" name="EnvelopeDetector.h" compile="0" resource="0"
+              file="Source/FABB/EnvelopeDetector.h"/>
+        <FILE id="cpSRt3" name="IIR.h" compile="0" resource="0" file="Source/FABB/IIR.h"/>
+        <FILE id="fOulGh" name="MathExpression.cpp" compile="1" resource="0"
+              file="Source/FABB/MathExpression.cpp"/>
+        <FILE id="QzFQHh" name="MathExpression.h" compile="0" resource="0"
+              file="Source/FABB/MathExpression.h"/>
+        <FILE id="ib20aQ" name="ParamConvert.cpp" compile="1" resource="0"
+              file="Source/FABB/ParamConvert.cpp"/>
+        <FILE id="nfBSiA" name="ParamConvert.h" compile="0" resource="0" file="Source/FABB/ParamConvert.h"/>
+        <FILE id="mjnLkF" name="SineOscillator.h" compile="0" resource="0"
+              file="Source/FABB/SineOscillator.h"/>
+      </GROUP>
+      <FILE id="uMTmlm" name="ChannelVocoder.h" compile="0" resource="0"
+            file="Source/ChannelVocoder.h"/>
+      <FILE id="vSSWFg" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="oZmsVw" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="IGxVzo" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="WlMf4H" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="blPlHl" name="PulseInstrument.h" compile="0" resource="0"
+            file="Source/PulseInstrument.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="D:\SDKs\ASIOSDK2.3.1\common"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="D:\SDKs\ASIOSDK2.3.1\common"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../SDKs/JUCE-7.0.1/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_ASIO="1" JUCE_WASAPI="1" JUCE_WASAPI_EXCLUSIVE="1"
+               JUCE_PLUGINHOST_VST3="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
