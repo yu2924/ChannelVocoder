@@ -29,11 +29,11 @@ public:
 	static constexpr float Q() { return 8; }
 	static constexpr float K() { return 0.94f; }
 	static constexpr float G() { return 2; }
-	FABB::RBJ2FilterF mFltA, mFltB;
+	FABB::RBJFilterF mFltA, mFltB;
 	CascadedBPF()
 	{
-		mFltA.SetType(FABB::RBJ2FilterF::Type::BP);
-		mFltB.SetType(FABB::RBJ2FilterF::Type::BP);
+		mFltA.SetType(FABB::RBJFilterF::Type::BP);
+		mFltB.SetType(FABB::RBJFilterF::Type::BP);
 		mFltA.SetQ(Q());
 		mFltB.SetQ(Q());
 	}

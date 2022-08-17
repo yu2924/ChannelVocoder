@@ -11,7 +11,6 @@
 #include "PulseInstrument.h"
 #include "ChannelVocoder.h"
 #include "FABB/EnvelopeDetector.h"
-#include "FABB/BLT.h"
 #include <array>
 
 // ===============================================================================
@@ -279,6 +278,7 @@ public:
 	}
 	virtual void processBlock(AudioSampleBuffer& asb, MidiBuffer& mb) override
 	{
+		juce::ScopedNoDenormals noDenormals;
 		mCore->Process(asb, mb);
 	}
 	// editor

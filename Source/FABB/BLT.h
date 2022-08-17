@@ -107,7 +107,7 @@ namespace FABB
 					*/
 					a0 = (s - c + 1); rcpa0 = 1 / a0;
 					coef.a1 = (-s - c + 1) * rcpa0;
-					coef.b0 = (s)* rcpa0;
+					coef.b0 = (s)*rcpa0;
 					coef.b1 = -coef.b0;
 					break;
 				}
@@ -155,18 +155,22 @@ namespace FABB
 
 	//
 	// based on: http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+	// without the A parameter
 	//
 	//        b0 + b1*z^-1 + b2*z^-2   b0*Z^2 + b1*z + b2
 	// H(z) = ---------------------- = ------------------
 	//         1 + a1*z^-1 + a2*z^-2      Z^2 + a1*z + a2
 	//
-	template<typename T, class TBaseIIR> class RBJ2FilterT : public TBaseIIR
+	// NOTE:
+	//   BPF   : constant peak gain, peak gain = 1
+	//   BPFVPG: constant skirt gain, peak gain = Q
+	//
+	template<typename T, class TBaseIIR> class RBJFilterT : public TBaseIIR
 	{
 	public:
-		enum Type { LP, HP, BP, BR, AP, PE, LS, HS } mType;
+		enum Type { LP, HP, BP, BPVPG, BR, AP } mType;
 		T mFreq;
 		T mQ;
-		T mA;
 		void InternalUpdate()
 		{
 			TBaseIIR* p = (TBaseIIR*)this;
@@ -181,9 +185,9 @@ namespace FABB
 					a0 = 1 + alpha; rcpa0 = 1 / a0;
 					coef.a1 = (-2 * c) * rcpa0;
 					coef.a2 = (1 - alpha) * rcpa0;
-					coef.b0 = ((1 - c)*0.5f) * rcpa0;
+					coef.b0 = ((1 - c) * 0.5f) * rcpa0;
 					coef.b1 = (1 - c) * rcpa0;
-					coef.b2 = ((1 - c)*0.5f) * rcpa0;
+					coef.b2 = ((1 - c) * 0.5f) * rcpa0;
 					break;
 				}
 				case HP:
@@ -192,9 +196,9 @@ namespace FABB
 					a0 = 1 + alpha; rcpa0 = 1 / a0;
 					coef.a1 = (-2 * c) * rcpa0;
 					coef.a2 = (1 - alpha) * rcpa0;
-					coef.b0 = ((1 + c)*0.5f) * rcpa0;
+					coef.b0 = ((1 + c) * 0.5f) * rcpa0;
 					coef.b1 = (-(1 + c)) * rcpa0;
-					coef.b2 = ((1 + c)*0.5f) * rcpa0;
+					coef.b2 = ((1 + c) * 0.5f) * rcpa0;
 					break;
 				}
 				case BP:
@@ -203,9 +207,20 @@ namespace FABB
 					a0 = 1 + alpha; rcpa0 = 1 / a0;
 					coef.a1 = (-2 * c) * rcpa0;
 					coef.a2 = (1 - alpha) * rcpa0;
-					coef.b0 = (alpha)* rcpa0;
+					coef.b0 = (alpha) * rcpa0;
 					coef.b1 = (0) * rcpa0;
 					coef.b2 = (-alpha) * rcpa0;
+					break;
+				}
+				case BPVPG:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = (alpha) * mQ * rcpa0;
+					coef.b1 = (0) * rcpa0;
+					coef.b2 = (-alpha) * mQ * rcpa0;
 					break;
 				}
 				case BR:
@@ -230,6 +245,140 @@ namespace FABB
 					coef.b2 = (1 + alpha) * rcpa0;
 					break;
 				}
+			}
+		}
+		RBJFilterT(Type t = LP, T f = 0.25f, T q = AFConst::QDef<T>(), T a = 1) : mType(t), mFreq(f), mQ(q)
+		{
+			InternalUpdate();
+		}
+		Type GetType() const
+		{
+			return mType;
+		}
+		void SetType(Type v)
+		{
+			mType = v;
+			InternalUpdate();
+		}
+		T GetFreq() const
+		{
+			return mFreq;
+		}
+		void SetFreq(T v)
+		{
+			mFreq = v;
+			InternalUpdate();
+		}
+		T GetQ() const
+		{
+			return mQ;
+		}
+		void SetQ(T v)
+		{
+			mQ = v;
+			InternalUpdate();
+		}
+		void SetFQ(T f, T q)
+		{
+			mFreq = f;
+			mQ = q;
+			InternalUpdate();
+		}
+	};
+
+	//
+	// based on: http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+	// with the A parameter
+	//
+	//        b0 + b1*z^-1 + b2*z^-2   b0*Z^2 + b1*z + b2
+	// H(z) = ---------------------- = ------------------
+	//         1 + a1*z^-1 + a2*z^-2      Z^2 + a1*z + a2
+	//
+	// NOTE:
+	//   BPF   : constant peak gain, peak gain = 1
+	//   BPFVPG: constant skirt gain, peak gain = Q
+	//
+	template<typename T, class TBaseIIR> class RBJAFilterT : public TBaseIIR
+	{
+	public:
+		enum Type { LP, HP, BP, BPVPG, BR, AP, PE, LS, HS } mType;
+		T mFreq;
+		T mQ;
+		T mA;
+		void InternalUpdate()
+		{
+			TBaseIIR* p = (TBaseIIR*)this;
+			TBaseIIR::Coef& coef = p->mCoef;
+			T w = AFConst::TwoPi<T>() * mFreq, c = std::cos(w), s = std::sin(w);
+			T a0, rcpa0;
+			switch(mType)
+			{
+				case LP:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = ((1 - c) * 0.5f) * mA * rcpa0;
+					coef.b1 = (1 - c) * mA * rcpa0;
+					coef.b2 = ((1 - c) * 0.5f) * mA * rcpa0;
+					break;
+				}
+				case HP:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = ((1 + c) * 0.5f) * mA * rcpa0;
+					coef.b1 = (-(1 + c)) * mA * rcpa0;
+					coef.b2 = ((1 + c) * 0.5f) * mA * rcpa0;
+					break;
+				}
+				case BP:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = (alpha) * mA * rcpa0;
+					coef.b1 = (0) * mA * rcpa0;
+					coef.b2 = (-alpha) * mA * rcpa0;
+					break;
+				}
+				case BPVPG:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = (alpha) * mQ * mA * rcpa0;
+					coef.b1 = (0) * mA * rcpa0;
+					coef.b2 = (-alpha) * mQ * mA * rcpa0;
+					break;
+				}
+				case BR:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = (1) * mA * rcpa0;
+					coef.b1 = (-2 * c) * mA * rcpa0;
+					coef.b2 = (1) * mA * rcpa0;
+					break;
+				}
+				case AP:
+				{
+					T alpha = s / (2 * mQ);
+					a0 = 1 + alpha; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * c) * rcpa0;
+					coef.a2 = (1 - alpha) * rcpa0;
+					coef.b0 = (1 - alpha) * mA * rcpa0;
+					coef.b1 = (-2 * c) * mA * rcpa0;
+					coef.b2 = (1 + alpha) * mA * rcpa0;
+					break;
+				}
 				case PE:
 				{
 					T A = sqrt(mA);
@@ -237,38 +386,38 @@ namespace FABB
 					a0 = 1 + (alpha / A); rcpa0 = 1 / a0;
 					coef.a1 = (-2 * c) * rcpa0;
 					coef.a2 = (1 - (alpha / A)) * rcpa0;
-					coef.b0 = (1 + (alpha*A)) * rcpa0;
+					coef.b0 = (1 + (alpha * A)) * rcpa0;
 					coef.b1 = (-2 * c) * rcpa0;
-					coef.b2 = (1 - (alpha*A)) * rcpa0;
+					coef.b2 = (1 - (alpha * A)) * rcpa0;
 					break;
 				}
 				case LS:
 				{
 					T A = sqrt(mA);
 					T beta = sqrt(2 * A);
-					a0 = (A + 1) + (A - 1)*c + beta*s; rcpa0 = 1 / a0;
-					coef.a1 = (-2 * ((A - 1) + (A + 1)*c)) * rcpa0;
-					coef.a2 = ((A + 1) + (A - 1)*c - beta*s) * rcpa0;
-					coef.b0 = (A*((A + 1) - (A - 1)*c + beta*s)) * rcpa0;
-					coef.b1 = (2 * A*((A - 1) - (A + 1)*c)) * rcpa0;
-					coef.b2 = (A*((A + 1) - (A - 1)*c - beta*s)) * rcpa0;
+					a0 = (A + 1) + (A - 1) * c + beta * s; rcpa0 = 1 / a0;
+					coef.a1 = (-2 * ((A - 1) + (A + 1) * c)) * rcpa0;
+					coef.a2 = ((A + 1) + (A - 1) * c - beta * s) * rcpa0;
+					coef.b0 = (A * ((A + 1) - (A - 1) * c + beta * s)) * rcpa0;
+					coef.b1 = (2 * A * ((A - 1) - (A + 1) * c)) * rcpa0;
+					coef.b2 = (A * ((A + 1) - (A - 1) * c - beta * s)) * rcpa0;
 					break;
 				}
 				case HS:
 				{
 					T A = sqrt(mA);
 					T beta = sqrt(2 * A);
-					a0 = (A + 1) - (A - 1)*c + beta*s; rcpa0 = 1 / a0;
-					coef.a1 = (2 * ((A - 1) - (A + 1)*c)) * rcpa0;
-					coef.a2 = ((A + 1) - (A - 1)*c - beta*s) * rcpa0;
-					coef.b0 = (A*((A + 1) + (A - 1)*c + beta*s)) * rcpa0;
-					coef.b1 = (-2 * A*((A - 1) + (A + 1)*c)) * rcpa0;
-					coef.b2 = (A*((A + 1) + (A - 1)*c - beta*s)) * rcpa0;
+					a0 = (A + 1) - (A - 1) * c + beta * s; rcpa0 = 1 / a0;
+					coef.a1 = (2 * ((A - 1) - (A + 1) * c)) * rcpa0;
+					coef.a2 = ((A + 1) - (A - 1) * c - beta * s) * rcpa0;
+					coef.b0 = (A * ((A + 1) + (A - 1) * c + beta * s)) * rcpa0;
+					coef.b1 = (-2 * A * ((A - 1) + (A + 1) * c)) * rcpa0;
+					coef.b2 = (A * ((A + 1) + (A - 1) * c - beta * s)) * rcpa0;
 					break;
 				}
 			}
 		}
-		RBJ2FilterT(Type t = LP, T f = 0.25f, T q = AFConst::QDef<T>(), T a = 1) : mType(t), mFreq(f), mQ(q), mA(a)
+		RBJAFilterT(Type t = LP, T f = 0.25f, T q = AFConst::QDef<T>(), T a = 1) : mType(t), mFreq(f), mQ(q), mA(a)
 		{
 			InternalUpdate();
 		}
@@ -321,7 +470,9 @@ namespace FABB
 	using DCBlockerD = DCBlockerT<double, IIR1D>;
 	using Analog1FilterF = Analog1FilterT<float, IIR1F>;
 	using Analog1FilterD = Analog1FilterT<double, IIR1D>;
-	using RBJ2FilterF = RBJ2FilterT<float, IIR2F>;
-	using RBJ2FilterD = RBJ2FilterT<double, IIR2D>;
+	using RBJFilterF = RBJFilterT<float, IIR2F>;
+	using RBJFilterD = RBJFilterT<double, IIR2D>;
+	using RBJAFilterF = RBJAFilterT<float, IIR2F>;
+	using RBJAFilterD = RBJAFilterT<double, IIR2D>;
 
 } // namespace FABB
