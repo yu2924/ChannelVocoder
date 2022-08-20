@@ -3,10 +3,11 @@
 //  Fundamental Audio Building Blocks
 //
 //  Created by yu2924 on 2012-01-21
-//  (c) 2012-2015 yu2924
+//  (c) 2012-2021 yu2924
 //
 
 #pragma once
+
 #include <string>
 
 namespace FABB

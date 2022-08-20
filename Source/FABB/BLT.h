@@ -3,7 +3,7 @@
 //  Fundamental Audio Building Blocks
 //
 //  Created by yu2924 on 2012-01-09
-//  (c) 2012-2015 yu2924
+//  (c) 2012-2022 yu2924
 //
 
 #pragma once
@@ -107,7 +107,7 @@ namespace FABB
 					*/
 					a0 = (s - c + 1); rcpa0 = 1 / a0;
 					coef.a1 = (-s - c + 1) * rcpa0;
-					coef.b0 = (s)*rcpa0;
+					coef.b0 = (s) * rcpa0;
 					coef.b1 = -coef.b0;
 					break;
 				}
@@ -247,7 +247,7 @@ namespace FABB
 				}
 			}
 		}
-		RBJFilterT(Type t = LP, T f = 0.25f, T q = AFConst::QDef<T>(), T a = 1) : mType(t), mFreq(f), mQ(q)
+		RBJFilterT(Type t = LP, T f = 0.25f, T q = AFConst::QDef<T>()) : mType(t), mFreq(f), mQ(q)
 		{
 			InternalUpdate();
 		}

@@ -3,7 +3,7 @@
 //  Fundamental Audio Building Blocks
 //
 //  Created by yu2924 on 2012-01-20
-//  (c) 2012-2017 yu2924
+//  (c) 2012-2021 yu2924
 //
 
 #if defined _MSC_VER && !defined _CRT_SECURE_NO_WARNINGS
@@ -89,6 +89,14 @@ namespace FABB
 			std::vector<int> vr(vs.size(), 0);
 			for(size_t c = vs.size(), i = 0; i < c; i ++) vr[i] = RankMatch(vs[i], s);
 			return std::distance(vr.begin(), std::max_element(vr.begin(), vr.end()));
+		}
+
+		static bool IsSameWord(const std::string& sref, const std::string& stest)
+		{
+			std::string sr = Trim(sref);
+			std::string st = Trim(stest);
+			if(sr.size() < st.size()) return false;
+			return strncasecmp(sr.c_str(), st.c_str(), st.size()) == 0;
 		}
 
 		template<typename T> static bool ParseValue(const std::string& s, T* pv)
@@ -470,7 +478,7 @@ namespace FABB
 		}
 		virtual bool Parse(const std::string& s, float* pvc) const
 		{
-			if(mPermissive || (strcasecmp(s.c_str(), mF.c_str()) == 0)) { *pvc = mVc; return true; }
+			if(mPermissive || ParamUtil::IsSameWord(mF, s)) { *pvc = mVc; return true; }
 			return false;
 		}
 	};

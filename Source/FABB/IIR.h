@@ -223,7 +223,7 @@ namespace FABB
 
 		// Transposed Direct-Form II
 		// 
-		// 	        b0
+		//             b0
 		// x[n] ----+--|>--|+|------+----y[n]
 		//          |       | s1    |
 		//          |     |z-1|     |

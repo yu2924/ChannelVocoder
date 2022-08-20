@@ -3,7 +3,7 @@
 //  Fundamental Audio Building Blocks
 //
 //  Created by yu2924 on 2012-01-21
-//  (c) 2012-2015 yu2924
+//  (c) 2012-2021 yu2924
 //
 
 #include <algorithm>
@@ -23,6 +23,30 @@ namespace FABB
 		static inline int CHARS(int ch1, int ch2) { return (ch1 << 8) | ch2; }
 		static inline const char* skipblank(const char* p) { while(isspace(*p)) p ++; return p; }
 		static inline const char* skipalnum(const char* p) { while(isalnum(*p)) p ++; return p; }
+
+		static inline double safemul(double a, double b)
+		{
+			if(std::isnan(a) || std::isnan(b)) return std::numeric_limits<double>::quiet_NaN();
+			if(std::isinf(a) || std::isinf(b))
+			{
+				double sign = (0 <= a ? 1 : -1) * (0 < b ? 1 : -1);
+				return sign * std::numeric_limits<double>::infinity();
+			}
+			return a * b;
+		}
+
+		static double safediv(double a, double b)
+		{
+			if(std::isnan(a) || std::isnan(b)) return std::numeric_limits<double>::quiet_NaN();
+			if(a == b) return 1;
+			if(a == -b) return -1;
+			if(std::isinf(b))
+			{
+				double sign = (0 <= a ? 1 : -1) * (0 < b ? 1 : -1);
+				return sign * 0;
+			}
+			return a / b;
+		}
 
 		static const char* findparenthesisrange(const char* p)
 		{
@@ -100,6 +124,9 @@ namespace FABB
 					tokens.push_back(Token(v));
 					p = ppare;
 				}
+				else if(strncmp(p, "%epsf", 5) == 0) { tokens.push_back(Token(std::numeric_limits<float>::epsilon()));	p += 5; }
+				else if(strncmp(p, "%epsd", 5) == 0) { tokens.push_back(Token(std::numeric_limits<double>::epsilon()));	p += 5; }
+				else if(strncmp(p, "%eps", 4) == 0) { tokens.push_back(Token(std::numeric_limits<double>::epsilon()));	p += 4; }
 				else if(strncmp(p, "%e", 2) == 0) { tokens.push_back(Token(2.71828182845904523536));	p += 2; }
 				else if(strncmp(p, "%pi", 3) == 0) { tokens.push_back(Token(3.14159265358979323846));	p += 3; }
 				else if(strncmp(p, "<=", 2) == 0) { tokens.push_back(Token(CHARS('<', '=')));			p += 2; }
@@ -180,8 +207,8 @@ namespace FABB
 				else if(op == CHARS('|')) vr = (vr || vn) ? 1 : 0;
 				else if(op == CHARS('+')) vr += vn;
 				else if(op == CHARS('-')) vr -= vn;
-				else if(op == CHARS('*')) vr *= vn;
-				else if(op == CHARS('/')) vr /= vn;
+				else if(op == CHARS('*')) vr = safemul(vr, vn);
+				else if(op == CHARS('/')) vr = safediv(vr, vn);
 				else if(op == CHARS('%')) vr = std::fmod(vr, vn);
 				else if(op == CHARS('^')) vr = std::pow(vr, vn);
 				else { if(perr) *perr = "invalid sequence"; return false; }
