@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 #include "PulseInstrument.h"
 #include "ChannelVocoder.h"
-#include "FABB/EnvelopeDetector.h"
+#include "FABB/EnvelopeFollower.h"
 #include <array>
 
 // ===============================================================================
@@ -33,7 +33,7 @@ static const char* const gParamProfile[] =
 	"BS"	"\t" "Band Shift"		"\t" "0~1;N0;int"	"\t" "lin!0~1!-4~4"				"\t" "lin!0~1!-4~4!%.0f,x!%f,x",
 };
 
-class LevelMeter : public FABB::EnvelopeDetectorF
+class LevelMeter : public FABB::EnvelopeFollowerF
 {
 public:
 	void ProcessWrite(const float* p, int l)
@@ -172,7 +172,7 @@ public:
 	void GetLevels(VocoderAudioProcessor::Levels* pv) const
 	{
 		ScopedLock sl(mLock);
-		for(size_t c = mIOMeters.size(), i = 0; i < c; i ++) pv->ios[i] = mIOMeters[i].GetLastValue();
+		for(size_t c = mIOMeters.size(), i = 0; i < c; i ++) pv->ios[i] = mIOMeters[i].GetValue();
 		mVocoder.GetModLevels(&pv->modbands);
 	}
 };

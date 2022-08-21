@@ -1,5 +1,5 @@
 //
-//  EnvelopeDetector.h
+//  EnvelopeFollower.h
 //  Fundamental Audio Building Blocks
 //
 //  Created by yu2924 on 2017-11-16
@@ -14,7 +14,7 @@
 namespace FABB
 {
 
-	template<typename T> class EnvelopeDetectorT
+	template<typename T> class EnvelopeFollowerT
 	{
 	public:
 		static constexpr T PI2() { return (T)6.283185307179586476925286766559; }
@@ -23,7 +23,7 @@ namespace FABB
 		// fc = 1 / (2 * PI * T)
 		T mAttackFc;
 		T mReleaseFc;
-		EnvelopeDetectorT()
+		EnvelopeFollowerT()
 		{
 			mAttackFc = (T)0;
 			mReleaseFc = (T)0;
@@ -40,14 +40,14 @@ namespace FABB
 		{
 			mLag.Reset();
 		}
-		T GetLastValue() const
+		T GetValue() const
 		{
-			return mLag.GetLastValue();
+			return mLag.GetValue();
 		}
 		T Process(T v)
 		{
 			v = std::abs(v);
-			mLag.SetFreq((mLag.GetLastValue() <= v) ? mAttackFc : mReleaseFc);
+			mLag.SetFreq((mLag.GetValue() <= v) ? mAttackFc : mReleaseFc);
 			return mLag.Process(v);
 		}
 		// allows inplace (pi == po)
@@ -61,7 +61,7 @@ namespace FABB
 		}
 	};
 
-	using EnvelopeDetectorF = EnvelopeDetectorT<float>;
-	using EnvelopeDetectorD = EnvelopeDetectorT<double>;
+	using EnvelopeFollowerF = EnvelopeFollowerT<float>;
+	using EnvelopeFollowerD = EnvelopeFollowerT<double>;
 
 } // namespace FABB

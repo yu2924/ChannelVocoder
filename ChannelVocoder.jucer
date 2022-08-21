@@ -21,8 +21,8 @@
               file="Source/FABB/BlitOscillator.h"/>
         <FILE id="TCjWxV" name="BLT.h" compile="0" resource="0" file="Source/FABB/BLT.h"/>
         <FILE id="b5qR97" name="CurveMapping.h" compile="0" resource="0" file="Source/FABB/CurveMapping.h"/>
-        <FILE id="jfe8jV" name="EnvelopeDetector.h" compile="0" resource="0"
-              file="Source/FABB/EnvelopeDetector.h"/>
+        <FILE id="OKPBZK" name="EnvelopeFollower.h" compile="0" resource="0"
+              file="Source/FABB/EnvelopeFollower.h"/>
         <FILE id="cpSRt3" name="IIR.h" compile="0" resource="0" file="Source/FABB/IIR.h"/>
         <FILE id="fOulGh" name="MathExpression.cpp" compile="1" resource="0"
               file="Source/FABB/MathExpression.cpp"/>

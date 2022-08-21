@@ -49,7 +49,7 @@ namespace FABB
 		{
 			m2PIFreq = 1 / v;
 		}
-		T GetLastValue() const
+		T GetValue() const
 		{
 			return mS;
 		}
@@ -98,7 +98,7 @@ namespace FABB
 		{
 			m2PIFreq = 1 / v;
 		}
-		T GetLastValue() const
+		T GetValue() const
 		{
 			return mOut;
 		}
@@ -143,7 +143,7 @@ namespace FABB
 		{
 			m2PIFreq = TwoPi() * v;
 		}
-		T GetLastValue() const
+		T GetValue() const
 		{
 			return mS;
 		}

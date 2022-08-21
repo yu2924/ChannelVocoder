@@ -6,8 +6,7 @@
 //  (c) 2017 yu2924
 //
 
-#ifndef PULSEINSTRUMENT_H_INCLUDED
-#define PULSEINSTRUMENT_H_INCLUDED
+#pragma once
 
 #include "FABB/CurveMapping.h"
 #include "FABB/ApproxCR.h"
@@ -18,6 +17,7 @@
 #include <algorithm>
 #include <list>
 #include <memory>
+#include <vector>
 
 class EnvelopeAR
 {
@@ -55,7 +55,7 @@ public:
 	}
 	bool IsSounding() const
 	{
-		return (0 < mGate) || (0.001f <= mLag.GetLastValue());
+		return (0 < mGate) || (0.001f <= mLag.GetValue());
 	}
 	float Process()
 	{
@@ -304,5 +304,3 @@ public:
 		while(l --) *p ++ += internalRawProcess();
 	}
 };
-
-#endif  // PULSEINSTRUMENT_H_INCLUDED

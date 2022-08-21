@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "FABB/EnvelopeDetector.h"
+#include "FABB/EnvelopeFollower.h"
 #include "FABB/BLT.h"
 #include <array>
 #include <cstdint>
@@ -77,7 +77,7 @@ class ChannelVocoder
 public:
 	enum { BandCount = 16 };
 	std::array<CascadedBPF, BandCount> mBPFC, mBPFM;
-	std::array<FABB::EnvelopeDetectorF, BandCount> mEnvD;
+	std::array<FABB::EnvelopeFollowerF, BandCount> mEnvD;
 	NoiseGenerator mNoiseGen;
 	float mNoiseGain;
 	int mBandShift;
@@ -126,7 +126,7 @@ public:
 		for(int i = 0; i < BandCount; i ++)
 		{
 			int im = i - mBandShift;
-			pv->at(i) = ((0 <= im) && (im < BandCount)) ? mEnvD[im].GetLastValue() : 0;
+			pv->at(i) = ((0 <= im) && (im < BandCount)) ? mEnvD[im].GetValue() : 0;
 		}
 	}
 	float Process(float vc, float vm)
